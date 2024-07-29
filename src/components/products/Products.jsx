@@ -1,35 +1,21 @@
 import React from 'react'
 import { useState } from 'react';
-import { Card } from 'antd';
+import { Card ,Button} from 'antd';
 import { useEffect } from 'react';
 import './Product.css'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 const { Meta } = Card;
+import { useGetAllCarsQuery,useDeleteCarsMutation } from '../../slice/authSlice';
 // import { useDispatch } from 'react-redux'
 // import { useAuthQuery } from '../../redux/api/authApi'
 const Products = () => {
-  
-    const [date,getDate] = useState([])
-   const getData = async ()=>{
-    
-    try{
-      await fetch("https://66a511d65dc27a3c190a9139.mockapi.io/api/cars/cars")
-    .then(res=>res.json())
-    .then(data=>{
-getDate(data)
-    })
-    }
-    catch(error){
-      console.log(error);
-    }
-   }
- useEffect(()=>{
-  getData()
- },[])
+  const {id}= useParams()
+    const {data:users} = useGetAllCarsQuery()
+  const [deleteCars] = useDeleteCarsMutation()
   return (
 <div className='cardDad'>
   {
-    date.map(item=>{
+    users?.map(item=>{
       return(
        <NavLink to="single/:id">
          <Card
@@ -41,6 +27,14 @@ getDate(data)
         cover={<img alt="example" src={item.image}/>}
       >
         <Meta title={item.name} description={item.price} text={item.model}/>
+      <div className="btn__Wrap">
+      <Button onClick={()=>deleteCars(item.id)} type="primary" danger>
+      Delete
+    </Button>
+    <Button type="primary">
+     <NavLink to='/single'>Edit</NavLink>
+    </Button>
+      </div>
       </Card>
        </NavLink>
       )
